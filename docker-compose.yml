@@ -5,7 +5,7 @@ services:
     image: nginx:1.15-alpine
     restart: unless-stopped
     networks:
-      front-end:
+      front_end:
     depends_on:
       - mywebapp
     volumes:
@@ -22,7 +22,7 @@ services:
     image: certbot/certbot
     restart: unless-stopped
     networks:
-      front-end:    
+      front_end:    
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
@@ -36,7 +36,7 @@ services:
       - "80"
       - "443"
     networks:
-      front-end:
+      front_end:
         aliases:
           - mywebapp
     environment:
@@ -47,5 +47,5 @@ services:
       - ./data/mywebapp/ASP.NET/Https:/root/.aspnet/https:ro
       - ./data/mywebapp/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
 networks:
-  front-end:
+  front_end:
         
