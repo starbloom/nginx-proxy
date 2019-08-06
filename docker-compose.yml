@@ -27,9 +27,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=https://+:443;http://+:80
     volumes:
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./data/mywebapp/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./data/mywebapp/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
 
-networks:
-  default:
-    name: frontend
