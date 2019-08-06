@@ -4,6 +4,8 @@ services:
   nginx:
     image: nginx:1.15-alpine
     restart: unless-stopped
+    networks:
+      front-end:
     depends_on:
       - mywebapp
     volumes:
@@ -18,6 +20,8 @@ services:
   certbot:
     image: certbot/certbot
     restart: unless-stopped
+    networks:
+      front-end:    
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
@@ -25,6 +29,12 @@ services:
 
   mywebapp:
     image: __MyAppImage__
+    restart: unless-stopped
+    hostname: mywebapp
+    networks:
+      front-end:
+        aliases:
+          - mywebapp
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=https://+:443;http://+:80
@@ -32,3 +42,6 @@ services:
       - ./data/mywebapp/ASP.NET/Https:/root/.aspnet/https:ro
       - ./data/mywebapp/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
 
+networks:
+  front-end:
+        

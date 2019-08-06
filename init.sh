@@ -83,3 +83,7 @@ echo
 
 echo "### Reloading nginx ..."
 docker-compose exec nginx nginx -s reload
+
+echo "### Starting certbot in renew mode ..."
+docker-compose up -d certbot
+
