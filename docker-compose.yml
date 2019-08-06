@@ -12,6 +12,7 @@ services:
       - ./data/nginx:/etc/nginx/conf.d
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
+      - ./data/mywebapp/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
     ports:
       - "80:80"
       - "443:443"
@@ -31,6 +32,9 @@ services:
     image: __MyAppImage__
     restart: unless-stopped
     hostname: mywebapp
+    expose:
+      - "80"
+      - "443"
     networks:
       front-end:
         aliases:
@@ -38,10 +42,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.microsoft/usersecrets/cert.pfx
     volumes:
       - ./data/mywebapp/ASP.NET/Https:/root/.aspnet/https:ro
       - ./data/mywebapp/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-
 networks:
   front-end:
         

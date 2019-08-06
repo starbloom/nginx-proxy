@@ -5,7 +5,7 @@ if ! [ -x "$(command -v docker-compose)" ]; then
   exit 1
 fi
 
-domains=($domain_names)
+domains=$domain_names
 rsa_key_size=2048
 data_path="./data/certbot"
 email=$certbot_email # Adding a valid address is strongly recommended
@@ -54,11 +54,7 @@ echo
 
 
 echo "### Requesting Let's Encrypt certificate for $domains ..."
-#Join $domains to -d args
-domain_args=""
-for domain in "${domains[@]}"; do
-  domain_args="$domain_args -d $domain"
-done
+domain_args="-d $domains"
 
 # Select appropriate email arg
 case "$email" in
@@ -83,7 +79,8 @@ echo
 
 echo "### Reloading nginx ..."
 docker-compose exec nginx nginx -s reload
+echo 
 
 echo "### Starting certbot in renew mode ..."
 docker-compose up -d certbot
-
+echo
