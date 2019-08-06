@@ -8,7 +8,7 @@ fi
 domains=($domain_names)
 rsa_key_size=2048
 data_path="./data/certbot"
-email="" # Adding a valid address is strongly recommended
+email=$certbot_email # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 ### always overwrie the existing data
@@ -23,7 +23,9 @@ staging=0 # Set to 1 if you're testing your setup to avoid hitting request limit
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
   mkdir -p "$data_path/conf"
-  curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/options-ssl-nginx.conf > "$data_path/conf/options-ssl-nginx.conf"
+  curl -s \
+  https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/tls_configs/options-ssl-nginx-tls12-only.conf \
+  > "$data_path/conf/options-ssl-nginx.conf"
   curl -s https://raw.githubusercontent.com/certbot/certbot/master/certbot/ssl-dhparams.pem > "$data_path/conf/ssl-dhparams.pem"
   echo
 fi
@@ -74,6 +76,8 @@ docker-compose run --rm --entrypoint "\
     $domain_args \
     --rsa-key-size $rsa_key_size \
     --agree-tos \
+    --noninteractive \
+    --no-eff-email \
     --force-renewal" certbot
 echo
 
