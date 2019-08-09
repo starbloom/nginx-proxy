@@ -31,15 +31,16 @@ if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/
 fi
 
 echo "### Checking if there is a valid certificate to avoid request limit..."
-days=$(( ($(date --date="$(openssl x509 -in ./data/certbot/conf/live/$domains/cert.pem -noout -dates  | grep notAfter | awk '{print $1,$2,$4}'| cut -b 10-14,15-)" "+%s") - $(date '+%s')) / 86400))
-cn=$(openssl x509 -noout -in ./data/certbot/conf/live/$domains/cert.pem -subject | cut -b 14-)
-if [ $cn = $domains ] && [ $days > 10 ]; then
-  echo "No need for new certificate"
-  no_new_cert=true
+if [ -f ./data/certbot/conf/live/$domains/cert.pem ]; then
+  days=$(( ($(date --date="$(openssl x509 -in ./data/certbot/conf/live/$domains/cert.pem -noout -dates  | grep notAfter | awk '{print $1,$2,$4}'| cut -b 10-14,15-)" "+%s") - $(date '+%s')) / 86400))
+  cn=$(openssl x509 -noout -in ./data/certbot/conf/live/$domains/cert.pem -subject | cut -b 14-)
+  if [ $cn = $domains ] && [ $days > 10 ]; then
+    echo "No need for new certificate"
+    no_new_cert=true
+  fi
 fi
 
-
-if [ $no_new_cert != true ]; then
+if [ "$no_new_cert" != "true" ]; then
   echo "### Creating dummy certificate for $domains ..."
   path="/etc/letsencrypt/live/$domains"
   mkdir -p "$data_path/conf/live/$domains"
@@ -55,7 +56,7 @@ echo "### Starting nginx ..."
 docker-compose up --force-recreate -d nginx
 echo
 
-if [ $no_new_cert != true ]; then
+if [ "$no_new_cert" != "true" ]; then
   echo "### Deleting dummy certificate for $domains ..."
   docker-compose run --rm --entrypoint "\
     rm -Rf /etc/letsencrypt/live/$domains && \
