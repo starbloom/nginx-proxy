@@ -26,7 +26,10 @@ if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/
   curl -s \
   https://raw.githubusercontent.com/certbot/certbot/master/certbot-nginx/certbot_nginx/_internal/tls_configs/options-ssl-nginx-tls13-session-tix-on.conf \
   > "$data_path/conf/options-ssl-nginx.conf"
-  openssl dhparam -out "$data_path/conf/ssl-dhparams.pem" 2048
+  if [ ! -e /etc/ssl/certs/dhparams.pem ]; then
+    openssl dhparam -out /etc/ssl/certs/dhparams.pem 2048
+  fi
+  ln -s /etc/ssl/certs/dhparams.pem "$data_path/conf/ssl-dhparams.pem"
   echo
 fi
 
